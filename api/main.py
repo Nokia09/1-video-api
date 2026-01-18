@@ -2,9 +2,6 @@ import json
 import random
 from datetime import datetime
 
-# =================================================
-# DANH SÁCH VIDEO
-# =================================================
 VIDEOS = [
     "https://files.catbox.moe/iwil8r.mp4",
     "https://files.catbox.moe/dm9504.mp4",
@@ -29,28 +26,34 @@ VIDEOS = [
     "https://files.catbox.moe/fndh30.mp4"
 ]
 
-# =================================================
-# HANDLER
-# =================================================
+
 def handler(request, context):
     headers = {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json; charset=utf-8"
     }
 
-    # Random 1 video
-    selected_video = random.choice(VIDEOS)
-
-    # JSON response
-    response_body = {
-        "status": True,
-        "data": selected_video,
-        "count": len(VIDEOS),
-        "update_time": datetime.now().strftime("%d/%m/%Y")
-    }
+    try:
+        selected_video = random.choice(VIDEOS)
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "headers": headers,
+            "body": json.dumps({
+                "status": False,
+                "error": str(e),
+                "count": len(VIDEOS),
+                "update_time": datetime.now().strftime("%d/%m/%Y")
+            })
+        }
 
     return {
         "statusCode": 200,
         "headers": headers,
-        "body": json.dumps(response_body, ensure_ascii=False)
+        "body": json.dumps({
+            "status": True,
+            "data": selected_video,
+            "count": len(VIDEOS),
+            "update_time": datetime.now().strftime("%d/%m/%Y")
+        }, ensure_ascii=False)
     }
